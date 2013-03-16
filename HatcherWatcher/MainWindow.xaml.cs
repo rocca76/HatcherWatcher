@@ -3,6 +3,8 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Net;
 using System;
+using System.Text;
+using System.Diagnostics;
 
 namespace HatcherWatcher
 {
@@ -43,8 +45,26 @@ namespace HatcherWatcher
     private void ProcessClient(object state)
     {
       TcpClient client = state as TcpClient;
-      // Do something with client
-      // ...
+
+      var data = new byte[client.ReceiveBufferSize];
+
+      StringBuilder dataString = new StringBuilder();
+
+      using (var ns = client.GetStream())
+      {
+          int readCount;
+          while ((readCount = ns.Read(data, 0, client.ReceiveBufferSize)) != 0)
+          {
+              Debug.Print(Encoding.UTF8.GetString(data, 0, readCount));
+          } 
+      }
+
+      client.Close();
+    }
+
+    private void buttonConnect_Click(object sender, RoutedEventArgs e)
+    {
+
     }
   }
 }
